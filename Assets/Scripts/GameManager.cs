@@ -1,11 +1,14 @@
 using System.IO;
 using System;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public String bestPlayerName;
     public String playerName;
+    public bool isGameActive;
     public float bestTime;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
@@ -47,4 +50,6 @@ public class GameManager : MonoBehaviour
             bestTime = data.bestTime;
         }
     }
+
+
 }

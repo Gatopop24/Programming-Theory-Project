@@ -19,8 +19,10 @@ public class MenuUIHandler : MonoBehaviour
     public void StartNew()
     {
         GetPlayerName();
+        GameManager.Instance.isGameActive = true;
         GameManager.Instance.LoadData();
         SceneManager.LoadScene(1);
+        GameManager.Instance.LoadData();
     }
     
     public void Exit()

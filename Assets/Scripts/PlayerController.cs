@@ -1,9 +1,12 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 using System;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController Instance;
     private float speed = 10.0f;
     private float xBound = 5;
     private float yBound = 4.5f;
@@ -11,18 +14,31 @@ public class PlayerController : MonoBehaviour
     private float bestTime;
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI bestTimeText;
+    public TextMeshProUGUI playerHealthText;
     public String bestPlayer;
     public String player;
     private Rigidbody playerRb;
     public float playerHealth = 100;
-    public bool isAlive;
+    public TextMeshProUGUI gameOverText;
+    public Button menuButton;
+    
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
 
     private void Start()
     {
         bestPlayer = GameManager.Instance.bestPlayerName;
         player = GameManager.Instance.playerName;
         bestTime = GameManager.Instance.bestTime;
-        isAlive = true;
+        
         time = 0;
         playerRb = GetComponent<Rigidbody>();
     }
@@ -34,15 +50,19 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        if(isAlive)
+        ShowBestScore();
+        if(GameManager.Instance.isGameActive)
         {
             IncreaseTime();
             if(time > bestTime)
             {
                 bestTime = time;
+                bestPlayer = player;
+                GameManager.Instance.bestPlayerName = bestPlayer;
                 GameManager.Instance.bestTime = bestTime;
             }
         }
+        GameManager.Instance.SaveData();
     }
 
     private void MovePlayer()
@@ -92,11 +112,31 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void TakeDamage(int damage)
     {
-        if(other.gameObject.CompareTag("Powerup"))
+        playerHealth -= damage;
+        playerHealthText.text = "Health : " + playerHealth;
+        if(playerHealth<=0)
         {
-            Destroy(other.gameObject);
+            GameOver();
         }
+    }
+
+    public void ShowBestScore()
+    {
+        bestTimeText.text = "Best Time :" + bestPlayer + " : " + MathF.Round(bestTime);
+    }
+
+    public void GameOver()
+    {
+        menuButton.gameObject.SetActive(true);
+        gameOverText.gameObject.SetActive(true);
+        GameManager.Instance.isGameActive = false;
+    }
+
+    public void Gotomenu()
+    {
+        GameManager.Instance.LoadData();
+        SceneManager.LoadScene(0);
     }
 }

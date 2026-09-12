@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class SpawnManger : MonoBehaviour
@@ -13,7 +14,17 @@ public class SpawnManger : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
-        InvokeRepeating("SpawnRandomBullet", startDelay, bulletSpawnTime);
+        StartCoroutine(SpawnBullet());
+    }
+
+    IEnumerator SpawnBullet()
+    {
+        yield return new WaitForSeconds(startDelay);
+        while(GameManager.Instance.isGameActive)
+        {
+            SpawnRandomBullet();
+            yield return new WaitForSeconds(bulletSpawnTime);
+        }
     }
 
     public void SpawnRandomBullet()
@@ -27,8 +38,8 @@ public class SpawnManger : MonoBehaviour
         GameObject pooledbullet = ObjectPooler.SharedInstance.GetPooledObject();
         if (pooledbullet != null)
         {
-            pooledbullet.SetActive(true);
             pooledbullet.transform.position = spawnPos;
+            pooledbullet.SetActive(true);
         }
     }
 

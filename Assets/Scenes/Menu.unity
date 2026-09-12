@@ -905,6 +905,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bestPlayerName: 
   playerName: 
+  gameOverText: {fileID: 0}
+  isGameActive: 1
+  menuButton: {fileID: 0}
   bestTime: 0
 --- !u!4 &1093182036
 Transform:
